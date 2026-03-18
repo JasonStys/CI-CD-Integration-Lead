@@ -1,28 +1,32 @@
-# Code Flow
+## Local run without typing terminal commands
 
-![CI](https://github.com/<OWNER>/<REPO>/actions/workflows/ci.yml/badge.svg)
-![Python](https://img.shields.io/badge/python-3.11-blue)
-![Tests](https://img.shields.io/badge/tests-pytest-brightgreen)
-![Coverage Artifacts](https://img.shields.io/badge/coverage-artifacts%20saved-success)
+For Windows, double click:
 
-Starter CI/CD scaffold for the AI in SDLC capstone project.
+`run_local_ci.bat`
 
-This repository includes:
+That file will:
 
-- GitHub Actions workflow for `pytest` and `coverage`
-- uploaded coverage artifacts
-- README badges
-- secret wiring for OpenAI and Hugging Face tokens
-- documentation for setup and key rotation
+- create `.venv` if needed
+- install dependencies
+- run pytest
+- generate coverage reports
 
-## Repository structure
+After it finishes, open:
 
-```text
-.github/workflows/ci.yml
-src/codeflow/
-tests/
-docs/
-requirements-dev.txt
-.coveragerc
-pytest.ini
-.env.example
+`htmlcov/index.html`
+
+to view the HTML coverage report.
+
+## GitHub Actions
+
+You do not need to run anything locally for CI.
+
+After you push your files to GitHub, the workflow in:
+
+`.github/workflows/ci.yml`
+
+runs automatically and uploads these artifacts:
+
+- `coverage.xml`
+- `htmlcov/`
+- `pytest-report.xml`
