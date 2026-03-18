@@ -1,0 +1,74 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: pytest + coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      PYTHONPATH: src
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Show optional secret configuration status
+        run: |
+          python - <<'PY'
+          import os
+
+          print("OPENAI_API_KEY configured:", "yes" if bool(os.getenv("OPENAI_API_KEY")) else "no")
+          print("HF_TOKEN configured:", "yes" if bool(os.getenv("HF_TOKEN")) else "no")
+          PY
+
+      - name: Run tests with coverage
+        run: |
+          pytest \
+            --maxfail=1 \
+            --disable-warnings \
+            --cov=src \
+            --cov-config=.coveragerc \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml \
+            --cov-report=html:htmlcov \
+            --junitxml=pytest-report.xml
+
+      - name: Upload coverage and test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-and-test-artifacts
+          path: |
+            coverage.xml
+            htmlcov/
+            pytest-report.xml
+          if-no-files-found: warn
+          retention-days: 14
