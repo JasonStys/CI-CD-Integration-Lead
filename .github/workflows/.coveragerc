@@ -1,0 +1,15 @@
+[run]
+branch = True
+source = src
+omit =
+    tests/*
+    .venv/*
+    venv/*
+
+[report]
+show_missing = True
+skip_covered = False
+precision = 2
+
+[html]
+directory = htmlcov
